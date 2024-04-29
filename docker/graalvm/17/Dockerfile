@@ -1,5 +1,9 @@
 FROM debian:bookworm-slim AS graalvm17
 
+# Set variables
+ARG GRAALVM_VERSION=17
+ARG GRAALVM_ARCH=linux-aarch64
+
 # Install dependencies
 # RUN apt-get update && apt-get install -y --no-install-recommends \
 #     ca-certificates \
@@ -19,4 +23,4 @@ COPY scripts/download_graalvm.sh /usr/local/bin/download_graalvm.sh
 #RUN cat /usr/local/bin/download_graalvm.sh
 RUN chmod +x /usr/local/bin/download_graalvm.sh
 
-RUN /usr/local/bin/download_graalvm.sh
+RUN /usr/local/bin/download_graalvm.sh -V ${GRAALVM_VERSION} -A ${GRAALVM_ARCH}

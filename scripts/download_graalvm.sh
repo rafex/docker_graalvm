@@ -1,5 +1,8 @@
 #!/bin/sh
 
+VERSION_SCRIPT=0.1.0
+DEBUG=false
+
 # https://download.oracle.com/graalvm/17/latest/graalvm-jdk-17_linux-aarch64_bin.tar.gz
 
 PATH_TMP=/tmp/graalvm
@@ -10,6 +13,39 @@ PATH_PWD=$(pwd)
 FILE_JAVA_HOME=java.sh
 PATH_PROFILE=/etc/profile.d/$FILE_JAVA_HOME
 
+usage() {
+  echo "Usage: $0 [-v] [-V] [-A] [-h]"
+  echo "Options:"
+  echo "  -v          Version."
+  echo "  -V          GraalVM version."
+  echo "  -A          GraalVM arch."
+  echo "  -h          Display the help message"
+}
+
+while getopts ":vV:A:h" option; do
+    case "${option}" in
+        v)  # Version option
+            echo $VERSION_SCRIPT
+            ;;
+        V)  # GraalVM version option
+            GRAALVM_VERSION=${OPTARG}
+            ;;
+        A)  # GraalVM arch option
+            GRAALVM_ARCH=${OPTARG}
+            ;;
+        h)  # Help option
+            usage
+            exit 0
+            ;;
+        \?) # Invalid option
+            echo "Invalid option: -$OPTARG"
+            usage
+            exit 1
+            ;;
+    esac
+done
+shift $(($OPTIND - 1))
+echo "Remaining arguments are: $*"
 
 # Create tmp directory
 mkdir -p $PATH_TMP

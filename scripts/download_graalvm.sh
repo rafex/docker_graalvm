@@ -1,12 +1,15 @@
 #!/bin/sh
 
+# https://download.oracle.com/graalvm/17/latest/graalvm-jdk-17_linux-aarch64_bin.tar.gz
+
 PATH_TMP=/tmp/graalvm
 GRAALVM_VERSION=17
-GRAALVM_ARCH=linux-x64
+GRAALVM_ARCH=linux-aarch64
 GRAALVM_URL=https://download.oracle.com/graalvm/${GRAALVM_VERSION}/latest/graalvm-jdk-${GRAALVM_VERSION}_${GRAALVM_ARCH}_bin.tar.gz
 PATH_PWD=$(pwd)
 FILE_JAVA_HOME=java.sh
 PATH_PROFILE=/etc/profile.d/$FILE_JAVA_HOME
+
 
 # Create tmp directory
 mkdir -p $PATH_TMP
@@ -30,32 +33,23 @@ ln -s /opt/graalvm-${GRAALVM_VERSION} /opt/graalvm
 # show the content of /opt
 ls -l /opt
 
-binary_graalvm=(
-    "java"
-    "javac"
-    "jar"
-    "javadoc"
-    "javap"
-    "jdeps"
-    "jdeprscan"
-    "native-image"
-    "native-image-inspect"
-    "rebuild-images"
-    "gu"
-    "jshell"
-    "polyglot"
-)
+#declare -a binary_graalvm
+binary_graalvm="java javac jar javadoc javap jdeps jdeprscan native-image native-image-inspect rebuild-images gu jshell polyglot"
 
 # Add GraalVM to the alternatives
-for binary in "${binary_graalvm[@]}"
+for binary in ${binary_graalvm};
 do
     update-alternatives --install /usr/bin/$binary $binary /opt/graalvm/bin/$binary 1
 done
 
 # Add JAVA_HOME and PATH to the profile
 if [ ! -e $PATH_PROFILE ]; then
-    echo "export PATH=/opt/graalvm/bin:\$PATH" | tee -a $PATH_PROFILE
-    echo "export JAVA_HOME=/opt/graalvm" | tee -a $PATH_PROFILE
+    echo "export GRAALVM_HOME=/opt/graalvm" | tee -a $PATH_PROFILE
+    echo "export PATH=\$GRAALVM_HOME/bin:\$PATH" | tee -a $PATH_PROFILE
+    echo "export JAVA_HOME=\$GRAALVM_HOME" | tee -a $PATH_PROFILE
+
+    #echo "source ${PATH_PROFILE}" | tee -a ~/.profile
+    echo "source ${PATH_PROFILE}" | tee -a ~/.bashrc
 fi
 
 

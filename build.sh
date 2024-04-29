@@ -4,15 +4,17 @@ VERSION_SCRIPT=0.1.0
 DEBUG=false
 PWD=$(pwd)
 DIRECTORY=$PWD/docker/graalvm
+IMAGE_NAME=my_graalvm
 GRAALVM_VERSION=17
 DOCKERFILE=Dockerfile
 DEBUG_DOCKER_BUILD=""
 
 usage() {
-  echo "Usage: $0 [-v] [-V] [-h]"
+  echo "Usage: $0 [-v] [-V] [-h] [-D]"
   echo "Options:"
   echo "  -v          Version."
   echo "  -V          GraalVM Version."
+  echo "  -D          Debug mode."
   echo "  -h          Display the help message"
 }
 
@@ -23,7 +25,7 @@ valid_directory() {
     fi
 }
 
-while getopts ":vV:h" option; do
+while getopts ":vV:Dh" option; do
     case "${option}" in
         v)  # Version option
             echo $VERSION_SCRIPT
@@ -32,6 +34,9 @@ while getopts ":vV:h" option; do
             GRAALVM_VERSION=${OPTARG}
             DIRECTORY=$DIRECTORY/$GRAALVM_VERSION
             valid_directory
+            ;;
+        D)  # Debug option
+            DEBUG=true
             ;;
         h)  # Help option
             usage
@@ -50,9 +55,9 @@ echo "Remaining arguments are: $*"
 # valid debug
 if [ "$DEBUG" = true ]; then
     echo "Version: $GRAALVM_VERSION"
-    echo "Arch: $GRAALVM_ARCH"
+    echo "Image Name: $IMAGE_NAME"
     echo "Directory: $DIRECTORY"
     DEBUG_DOCKER_BUILD="--progress=plain --no-cache"
 fi
 
-docker build $DEBUG_DOCKER_BUILD -t my_graalvm:$GRAALVM_VERSION -f $DIRECTORY/$DOCKERFILE .
+docker build $DEBUG_DOCKER_BUILD -t $IMAGE_NAME:$GRAALVM_VERSION -f $DIRECTORY/$DOCKERFILE .

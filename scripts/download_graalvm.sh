@@ -22,6 +22,12 @@ usage() {
   echo "  -h          Display the help message"
 }
 
+show_info() {
+    echo "Version: $GRAALVM_VERSION"
+    echo "Arch: $GRAALVM_ARCH"
+    echo "URL: $GRAALVM_URL"
+}
+
 while getopts ":vV:A:h" option; do
     case "${option}" in
         v)  # Version option
@@ -46,6 +52,8 @@ while getopts ":vV:A:h" option; do
 done
 shift $(($OPTIND - 1))
 echo "Remaining arguments are: $*"
+GRAALVM_URL=https://download.oracle.com/graalvm/${GRAALVM_VERSION}/latest/graalvm-jdk-${GRAALVM_VERSION}_${GRAALVM_ARCH}_bin.tar.gz
+show_info
 
 # Create tmp directory
 mkdir -p $PATH_TMP

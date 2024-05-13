@@ -1,4 +1,7 @@
-FROM debian:bookworm-slim AS graalvm17
+FROM debian:bookworm-slim AS graalvm17-xvfb
+
+ENV DISPLAY=:99
+ENV JAVA_TOOL_OPTIONS=-Djava.awt.headless=false
 
 # Set variables
 ARG GRAALVM_VERSION=17
@@ -14,15 +17,21 @@ ARG GRAALVM_ARCH=linux-aarch64
 #     zlib1g-dev \
 #     && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
-    wget \
-    gcc \
-    libc6-dev \
-    libzstd-dev \
-    zlib1g-dev \
-    #build-essential \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -y && apt-get install -y --no-install-recommends \
+  ca-certificates \
+  wget \
+  gcc \
+  libc6-dev \
+  libzstd-dev \
+  zlib1g-dev \
+  xvfb \
+  x11-utils \
+  locales \
+  xauth \
+  fonts-dejavu \
+  libgl1-mesa-dri \
+  #build-essential \
+  && rm -rf /var/lib/apt/lists/*
 
 COPY scripts/download_graalvm.sh /usr/local/bin/download_graalvm.sh
 #RUN cat /usr/local/bin/download_graalvm.sh

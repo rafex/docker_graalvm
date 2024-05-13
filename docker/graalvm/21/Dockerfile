@@ -17,6 +17,11 @@ ARG GRAALVM_ARCH=linux-aarch64
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     wget \
+    gcc \
+    libc6-dev \
+    libzstd-dev \
+    zlib1g-dev \
+    #build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 COPY scripts/download_graalvm.sh /usr/local/bin/download_graalvm.sh

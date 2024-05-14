@@ -5,15 +5,18 @@ DEBUG=false
 PWD=$(pwd)
 DIRECTORY=$PWD/docker/graalvm
 IMAGE_NAME=my_graalvm
+CUSTOM_IMAGE_NAME="-custom"
 GRAALVM_VERSION=17
 DOCKERFILE=Dockerfile
 DEBUG_DOCKER_BUILD=""
+DOCKERFILE_EXTENSION=""
 
 usage() {
-  echo "Usage: $0 [-v] [-V] [-h] [-D]"
+  echo "Usage: $0 [-v] [-V] [-h] [-D] [-f]"
   echo "Options:"
   echo "  -v          Version."
   echo "  -V          GraalVM Version."
+  echo "  -f          Dockerfile."
   echo "  -D          Debug mode."
   echo "  -h          Display the help message"
 }
@@ -25,7 +28,13 @@ valid_directory() {
     fi
 }
 
-while getopts ":vV:Dh" option; do
+get_extension() {
+  local filename=$1
+  local extension=$(echo "$filename" | sed 's/.*\.//')
+  echo "$extension"
+}
+
+while getopts ":vV:f:Dh" option; do
     case "${option}" in
         v)  # Version option
             echo $VERSION_SCRIPT
@@ -38,6 +47,11 @@ while getopts ":vV:Dh" option; do
         D)  # Debug option
             DEBUG=true
             ;;
+        f)  # Debug option
+            DOCKERFILE=${OPTARG}
+            IMAGE_NAME=${IMAGE_NAME}${CUSTOM_IMAGE_NAME}
+            DOCKERFILE_EXTENSION="-$(get_extension $DOCKERFILE)"
+            ;;    
         h)  # Help option
             usage
             exit 0
@@ -60,4 +74,4 @@ if [ "$DEBUG" = true ]; then
     DEBUG_DOCKER_BUILD="--progress=plain --no-cache"
 fi
 
-docker build $DEBUG_DOCKER_BUILD -t $IMAGE_NAME:$GRAALVM_VERSION -f $DIRECTORY/$DOCKERFILE .
+docker build $DEBUG_DOCKER_BUILD -t $IMAGE_NAME:$GRAALVM_VERSION$DOCKERFILE_EXTENSION -f $DIRECTORY/$DOCKERFILE .

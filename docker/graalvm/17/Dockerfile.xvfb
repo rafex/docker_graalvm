@@ -37,4 +37,9 @@ COPY scripts/download_graalvm.sh /usr/local/bin/download_graalvm.sh
 #RUN cat /usr/local/bin/download_graalvm.sh
 RUN chmod +x /usr/local/bin/download_graalvm.sh
 
+
+COPY scripts-utils-containers/xvfb/xvfb.sh /usr/bin/xvfb-startup
+RUN cat /usr/bin/xvfb-startup
+RUN chmod +x /usr/bin/xvfb-startup
+
 RUN /usr/local/bin/download_graalvm.sh -V ${GRAALVM_VERSION} -A ${GRAALVM_ARCH}
